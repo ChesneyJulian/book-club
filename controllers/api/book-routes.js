@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { Book, Group, User, GroupBooks } = require('../../models');
+const { Book, Group, User, GroupBooks, Chapter } = require('../../models');
 
 router.post('/create', async (req, res) => {
   try {
@@ -25,12 +25,22 @@ router.post('/create', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    const bookData = await Book.findAll({});
+    const bookData = await Book.findAll({ include: [
+      {
+        model: Group
+      },
+      {
+        model: Chapter
+      }
+    ],
+    order: [
+      [{ model: Chapter}, 'chapterNumber', 'ASC']
+    ]
+  });
     if (!bookData) {
       console.log("no book data found");
       return;
     } else {
-      console.log(bookData);
       res.status(200).json(bookData);
     }
   } catch (err) {
