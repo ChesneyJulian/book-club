@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { Group, User, GroupMembers } = require('../../models');
+const { Group, User, GroupMembers, GroupBooks, Book } = require('../../models');
 
 router.post('/create', async (req, res) => {
   try {
@@ -7,22 +7,17 @@ router.post('/create', async (req, res) => {
       name: req.body.name,
       genres: req.body.genres,
     }).then((group) => {
-      if (req.body.members.length) {
+      if (req.body.members) {
         const membersArr = req.body.members.map((member_id) => {
           return {
             group_id: group.id,
             member_id: member_id
           }
         })
-        const groupMembersData = GroupMembers.bulkCreate(membersArr);
-        console.log(groupMembersData);
-        return groupMembersData;
-      }
+        return GroupMembers.bulkCreate(membersArr);
+      };
     });
-
-    if (newGroup) {
-      res.status(200).json(newGroup);
-    };
+    res.status(200).json(newGroup);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -30,7 +25,14 @@ router.post('/create', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    const groupData = await Group.findAll({ include: User});
+    const groupData = await Group.findAll({ include: [
+      {
+        model: User
+      },
+      {
+        model: Book
+      }
+    ]});
     if (groupData) {
       return res.status(200).json(groupData);
     }

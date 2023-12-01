@@ -9,7 +9,7 @@ router.post('/create', async (req, res) => {
       email: req.body.email,
       password: req.body.password,
     }).then((user) => {
-      if (req.body.groups.length) {
+      if (req.body.groups) {
         const userGroupsArr = req.body.groups.map((group_id) => {
           return {
             group_id: group_id,
@@ -17,11 +17,11 @@ router.post('/create', async (req, res) => {
           }
         })
         return GroupMembers.bulkCreate(userGroupsArr);
-      };
-    })
-    if (newUser) {
-      res.status(200).json(newUser);
-    }
+      } else {
+        return user;
+      }
+    });
+    res.status(200).json(newUser);
   } catch (err) {
     res.status(500).json(err);
   };

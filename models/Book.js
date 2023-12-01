@@ -1,9 +1,9 @@
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/connection");
 
-class GroupMembers extends Model {};
+class Book extends Model {};
 
-GroupMembers.init(
+Book.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -11,21 +11,18 @@ GroupMembers.init(
       primaryKey: true,
       autoIncrement: true
     },
-    group_id: {
-      type: DataTypes.INTEGER,
+    name: {
+      type: DataTypes.STRING,
+      unique: true,
       allowNull: false,
-      references: {
-        model: "group",
-        key: "id"
-      }
     },
-    member_id: {
-      type: DataTypes.INTEGER,
+    author: {
+      type: DataTypes.STRING,
       allowNull: false,
-      references: {
-        model: "user",
-        key: "id"
-      }
+    },
+    genre: {
+      type: DataTypes.STRING,
+      allowNull: false
     }
   },
   {
@@ -33,8 +30,8 @@ GroupMembers.init(
     timestamps: false,
     freezeTableName: true,
     underscored: true,
-    modelName: "group_members",
+    modelName: "book",
   }
 );
 
-module.exports = GroupMembers;
+module.exports = Book;
